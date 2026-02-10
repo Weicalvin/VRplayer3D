@@ -1,0 +1,49 @@
+# Gradle files
+.gradle/
+build/
+*.apk
+*.ap_
+*.aab
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Log/OS Files
+*.log
+.DS_Store
+
+# Android Studio generated files and folders
+.idea/
+.classpath
+.c9/
+*.class
+*.jar
+*.war
+*.ear
+*.iml
+*.iws
+*.ipr
+.project
+.pydevproject
+.settings/
+*.sublime-workspace
+
+# IntelliJ
+out/
+.idea/
+*.iml
+*.iws
+*.ipr
+*.ids
+*.orig
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be committed to a new repository
+.vscode/
+
+# Miscellaneous
+.babelrc
+.gradle
+.gradle/
+local.properties
+*.iml
