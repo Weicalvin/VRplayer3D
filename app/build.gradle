@@ -1,4 +1,3 @@
-
 plugins {
     id 'com.android.application' version '8.1.0'
     id 'org.jetbrains.kotlin.android' version '1.9.0'
@@ -23,26 +22,6 @@ android {
         }
     }
 
-    // 🔥 無敵模式：關閉所有囉唆的檢查，強制通過
-    lintOptions {
-        checkReleaseBuilds false
-        abortOnError false
-        ignoreWarnings true
-    }
-
-    // 🔥 防爆模式：解決重複檔案衝突
-    packagingOptions {
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/license.txt'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'META-INF/notice.txt'
-        exclude 'META-INF/ASL2.0'
-        exclude 'META-INF/*.kotlin_module'
-    }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
@@ -51,15 +30,41 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
+
+    // 🔥 核彈級修復：解決所有重複檔案與衝突 🔥
+    packagingOptions {
+        resources {
+            excludes += [
+                'META-INF/{AL2.0,LGPL2.1}',
+                'META-INF/LICENSE.txt',
+                'META-INF/LICENSE',
+                'META-INF/NOTICE.txt',
+                'META-INF/NOTICE',
+                'META-INF/DEPENDENCIES'
+            ]
+        }
+    }
+    
+    // 忽略 Lint 檢查
+    lintOptions {
+        abortOnError false
+        checkReleaseBuilds false
+    }
 }
 
 dependencies {
+    // 核心元件
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    // VR 功能
     implementation 'com.google.android.exoplayer:exoplayer:2.19.1'
+    
+    // 網路與協程
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
-    // ⚠️ 絕對不要加 org.json，Android 系統內建就有！
+    
+    // ⚠️ 注意：這裡絕對不能有 org.json，因為系統內建就有，加了會導致打包失敗！
 }
