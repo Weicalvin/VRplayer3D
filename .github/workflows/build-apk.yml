@@ -1,6 +1,9 @@
-name: Debug Build
+name: Build Android APK
 
-on: [push, workflow_dispatch]
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -18,19 +21,19 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: 🔍 檢查檔案位置 (偵探模式)
+      - name: 🚑 修復 Gradle Wrapper (關鍵步驟)
         run: |
-          echo "=== 正在檢查你的檔案有沒有放對房間... ==="
-          find . -maxdepth 5 -not -path '*/.*'
-          echo "=========================================="
+          # 1. 移除 Windows 的換行符號 (解決 Pipe call failed)
+          sed -i 's/\r$//' gradlew
+          # 2. 給予執行權限 (解決 Permission denied)
+          chmod +x gradlew
 
-      - name: Build APK (使用系統 Gradle)
-        # 這裡改用 gradle 直接指令，避開 gradlew 權限問題
-        run: gradle assembleDebug --stacktrace
+      - name: Build APK (使用正確的 Wrapper)
+        # 這裡改回使用 ./gradlew，保證使用 Gradle 8.0
+        run: ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK
-        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: VR-Player-App
-          path: "**/*.apk"
+          path: app/build/outputs/apk/debug/*.apk
