@@ -31,43 +31,42 @@ android {
         jvmTarget = '17'
     }
 
-    // 🔥 關鍵修改 1：遇到重複檔案，直接選第一個，不要報錯！
-    packagingOptions {
-        pickFirst 'META-INF/DEPENDENCIES'
-        pickFirst 'META-INF/LICENSE'
-        pickFirst 'META-INF/LICENSE.txt'
-        pickFirst 'META-INF/license.txt'
-        pickFirst 'META-INF/NOTICE'
-        pickFirst 'META-INF/NOTICE.txt'
-        pickFirst 'META-INF/notice.txt'
-        pickFirst 'META-INF/ASL2.0'
-        pickFirst 'META-INF/*.kotlin_module'
-        pickFirst 'classes.jar'
-        pickFirst 'lib/x86/libc++_shared.so'
-        pickFirst 'lib/x86_64/libc++_shared.so'
-        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
-        pickFirst 'lib/arm64-v8a/libc++_shared.so'
+    // 🔥 關鍵修正：Gradle 8.0+ 必須使用 packaging 區塊 (不能用 packagingOptions)
+    packaging {
+        resources {
+            // 使用 pickFirst 解決重複檔案衝突
+            pickFirsts += [
+                'META-INF/DEPENDENCIES',
+                'META-INF/LICENSE',
+                'META-INF/LICENSE.txt',
+                'META-INF/license.txt',
+                'META-INF/NOTICE',
+                'META-INF/NOTICE.txt',
+                'META-INF/notice.txt',
+                'META-INF/ASL2.0',
+                'META-INF/*.kotlin_module'
+            ]
+            // 如果 pickFirsts 還不行，就用 excludes 強制排除
+            excludes += [
+                'META-INF/{AL2.0,LGPL2.1}'
+            ]
+        }
     }
     
-    // 🔥 關鍵修改 2：關閉囉唆的檢查
-    lintOptions {
-        abortOnError false
-        checkReleaseBuilds false
+    // 關閉嚴格檢查
+    lint {
+        abortOnError = false
+        checkReleaseBuilds = false
     }
-}
-
-// 🔥 關鍵修改 3：全域排除會打架的庫
-configurations.all {
-    exclude group: 'org.json', module: 'json' // 排除重複的 JSON
-    exclude group: 'com.google.guava', module: 'listenablefuture' // 排除重複的 Guava 衝突
 }
 
 dependencies {
+    // 核心元件
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    
+
     // VR 播放器
     implementation 'com.google.android.exoplayer:exoplayer:2.19.1'
     
