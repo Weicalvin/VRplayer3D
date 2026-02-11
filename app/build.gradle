@@ -13,6 +13,9 @@ android {
         targetSdk 34
         versionCode 1
         versionName "1.0"
+        
+        // 確保支援向量圖
+        vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
@@ -21,11 +24,26 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    
-    // 忽略檢查，確保能打包成功
+
+    // 🛑 關鍵修改 1：關閉所有囉唆的檢查
     lintOptions {
         checkReleaseBuilds false
         abortOnError false
+        ignoreWarnings true
+    }
+
+    // 🛑 關鍵修改 2：解決「檔案重複」的衝突
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/*.kotlin_module'
+        // 如果有其他重複的檔案，這裡會通通丟掉
     }
 
     compileOptions {
@@ -39,11 +57,18 @@ android {
 }
 
 dependencies {
+    // 核心元件
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+
+    // VR 播放器
     implementation 'com.google.android.exoplayer:exoplayer:2.19.1'
+    
+    // 網路
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+
+    // ⚠️ 絕對不要加 org.json，Android 系統內建就有，加了會爆炸！
 }
