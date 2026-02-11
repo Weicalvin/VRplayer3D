@@ -1,9 +1,6 @@
-name: Build Android APK
+name: Debug Build
 
-on:
-  push:
-    branches: [ "main" ]
-  workflow_dispatch:
+on: [push, workflow_dispatch]
 
 jobs:
   build:
@@ -21,15 +18,19 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Fix Permissions
-        # 這行是關鍵！給予執行權限，解決 Permission denied
-        run: chmod +x gradlew
+      - name: 🔍 檢查檔案位置 (偵探模式)
+        run: |
+          echo "=== 正在檢查你的檔案有沒有放對房間... ==="
+          find . -maxdepth 5 -not -path '*/.*'
+          echo "=========================================="
 
-      - name: Build APK
-        run: ./gradlew assembleDebug --stacktrace
+      - name: Build APK (使用系統 Gradle)
+        # 這裡改用 gradle 直接指令，避開 gradlew 權限問題
+        run: gradle assembleDebug --stacktrace
 
       - name: Upload APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: VR-Player-App
-          path: app/build/outputs/apk/debug/*.apk
+          path: "**/*.apk"
