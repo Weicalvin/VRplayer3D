@@ -38,12 +38,10 @@ jobs:
           accept-android-sdk-licenses: true
 
       - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+        run: chmod +x ./gradlew
 
       - name: Build APK with Gradle
-        run: |
-          ./gradlew --version
-          ./gradlew clean assembleDebug --stacktrace
+        run: bash ./gradlew clean assembleDebug --stacktrace
 
       - name: Check APK exists
         run: |
@@ -52,7 +50,7 @@ jobs:
             ls -lh app/build/outputs/apk/debug/app-debug.apk
           else
             echo "❌ APK 未找到"
-            find app/build -name "*.apk" -type f
+            find app/build -name "*.apk" -type f || echo "No APK found"
             exit 1
           fi
 
@@ -71,11 +69,3 @@ jobs:
           files: app/build/outputs/apk/debug/app-debug.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload build logs on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-logs
-          path: app/build/
-          retention-days: 7
