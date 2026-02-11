@@ -11,8 +11,8 @@
         android:allowBackup="true"
         android:label="VR Player Pro"
         android:theme="@style/Theme.AppCompat.NoActionBar"
-        android:icon="@android:drawable/sym_def_app_icon"> 
-
+        android:icon="@android:drawable/sym_def_app_icon">
+        
         <activity
             android:name=".MainActivity"
             android:exported="true"
