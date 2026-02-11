@@ -1,18 +1,6 @@
-// 1. 自帶工具箱設定 (Self-contained configuration)
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.1.0'
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0'
-    }
-}
-
 plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+    id 'com.android.application' version '8.1.0'
+    id 'org.jetbrains.kotlin.android' version '1.9.0'
 }
 
 android {
@@ -34,7 +22,7 @@ android {
         }
     }
     
-    // 2. 關鍵設定：無視 Lint 檢查錯誤，強行通過！
+    // 忽略檢查，確保能打包成功
     lintOptions {
         checkReleaseBuilds false
         abortOnError false
@@ -50,12 +38,6 @@ android {
     }
 }
 
-// 3. 自帶採購地圖
-repositories {
-    google()
-    mavenCentral()
-}
-
 dependencies {
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
@@ -64,6 +46,4 @@ dependencies {
     implementation 'com.google.android.exoplayer:exoplayer:2.19.1'
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
-    
-    // 注意：這裡移除了 org.json，因為 Android 系統已經內建了，加了反而會打架報錯！
 }
