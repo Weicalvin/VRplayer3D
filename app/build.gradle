@@ -32,6 +32,9 @@ android {
     }
 
     // 🔥 關鍵修正：Gradle 8.0+ 必須使用 packaging 區塊 (不能用 packagingOptions)
+        // ... 前面的代碼不用動 ...
+
+    // 🔥 請把 packaging 這整塊換成下面這樣 (補上了 .so 檔的設定)
     packaging {
         resources {
             // 使用 pickFirst 解決重複檔案衝突
@@ -44,15 +47,22 @@ android {
                 'META-INF/NOTICE.txt',
                 'META-INF/notice.txt',
                 'META-INF/ASL2.0',
-                'META-INF/*.kotlin_module'
+                'META-INF/*.kotlin_module',
+                // 👇 補上這些關鍵的 .so 檔設定，防止最後一刻失敗
+                'lib/x86/libc++_shared.so',
+                'lib/x86_64/libc++_shared.so',
+                'lib/armeabi-v7a/libc++_shared.so',
+                'lib/arm64-v8a/libc++_shared.so'
             ]
-            // 如果 pickFirsts 還不行，就用 excludes 強制排除
+            
             excludes += [
                 'META-INF/{AL2.0,LGPL2.1}'
             ]
         }
     }
     
+    // ... 後面的 lint 和 dependencies 不用動 ...
+
     // 關閉嚴格檢查
     lint {
         abortOnError = false
