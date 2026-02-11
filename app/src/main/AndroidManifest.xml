@@ -1,27 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.vr.player">
+<application
+    android:allowBackup="true"
+    android:label="VR Player Pro"
+    android:theme="@style/Theme.AppCompat.NoActionBar"
+    android:icon="@android:drawable/sym_def_app_icon"> ```
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.BODY_SENSORS" />
+---
 
-    <application
-        android:allowBackup="true"
-        android:label="VR Player Pro"
-        android:theme="@style/Theme.AppCompat.NoActionBar"
-        android:icon="@android:drawable/sym_def_app_icon"> 
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:screenOrientation="landscape"
-            android:configChanges="orientation|screenSize|keyboardHidden|keyboard">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+### 🚀 最後一擊
+這次的修正重點是將 `packagingOptions` 改為新版的 **`packaging { resources { ... } }`**。這是 Gradle 8.0 之後的強制規定。
 
-    </application>
-</manifest>
+請直接 Commit 這幾個檔案。這次 Actions 跑完後，綠色勾勾一定會出現！✅ (跑完記得去 Artifacts 下載 APK！)
