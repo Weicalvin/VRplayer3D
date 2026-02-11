@@ -23,7 +23,7 @@
 ##############################################################################
 
 # Attempt to set APP_HOME
-# Resolve links: $0 may be a link
+# Resolve links: $0 may be a symlink
 PRG="$0"
 # Need this for relative symlinks.
 while [ -h "$PRG" ] ; do
@@ -46,7 +46,7 @@ APP_BASE_NAME=`basename "$0"`
 # Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
 DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
 
-# Use the maximum available, or set MAX_FD != -1 to use that value.
+# Use the maximum available, or set MAX_FD != maximum possible.
 MAX_FD="maximum"
 
 warn () {
@@ -82,7 +82,6 @@ esac
 
 CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
 
-
 # Determine the Java command to use to start the JVM.
 if [ -n "$JAVA_HOME" ] ; then
     if [ -x "$JAVA_HOME/jre/sh/java" ] ; then
@@ -106,33 +105,71 @@ location of your Java installation."
 fi
 
 # Increase the maximum file descriptors if we can.
-if [ "$cygwin" = "false" -a "$msys" = "false" ] && [ -x /usr/bin/id ]; then
-    MAX_FD=`/usr/bin/id -u -n -G | tr ' ' '\n' | grep -v '^' | wc -l`
+if [ "$cygwin" = "false" -a "$msys" = "false" ] && [ -x /bin/ulimit ]; then
+    MAX_FD_LIMIT=`/bin/ulimit -H -n`
     if [ $? -eq 0 ] ; then
-        MAX_FD=`expr $MAX_FD \* 1000`
+        if [ "$MAX_FD" = "maximum" -o "$MAX_FD" = "max" ] ; then
+            MAX_FD="$MAX_FD_LIMIT"
+        fi
+        ulimit -n $MAX_FD
+        if [ $? -ne 0 ] ; then
+            warn "Could not set maximum file descriptor limit: $MAX_FD"
+        fi
+    else
+        warn "Could not query maximum file descriptor limit: $MAX_FD_LIMIT"
     fi
 fi
 
-# Increase the maximum file descriptors if we can.
-if [ "$cygwin" = "false" -a "$msys" = "false" ] && [ -x /usr/bin/id ]; then
-    MAX_FD=`/usr/bin/id -u -n -G | tr ' ' '\n' | grep -v '^' | wc -l`
-    if [ $? -eq 0 ] ; then
-        MAX_FD=`expr $MAX_FD \* 1000`
-    fi
+# For Darwin, add options to specify how the application appears in the dock
+if $darwin; then
+    GRADLE_OPTS="$GRADLE_OPTS \"-Xdock:name=$APP_NAME\" \"-Xdock:icon=$APP_HOME/media/gradle.icns\""
 fi
 
-if [ ! -z "$MAX_FD" ] ; then
-    ulimit -n $MAX_FD
+# For Cygwin or MSYS, switch paths to Windows format before running java
+if [ "$cygwin" = "true" -o "$msys" = "true" ] ; then
+    APP_HOME=`cygpath --path --mixed "$APP_HOME"`
+    CLASSPATH=`cygpath --path --mixed "$CLASSPATH"`
+
+    JAVACMD=`cygpath --unix "$JAVACMD"`
+
+    # Now convert the arguments - kludge to limit ourselves to /bin/sh
+    for arg do
+        if
+            case $arg in
+                -*)  false;;
+                /)   false;;
+                */.* ) false;;
+                *) true;;
+            esac
+        then
+            arg=`cygpath --path --mixed "$arg"`
+        fi
+        MODULE_SEARCH_PATH="$MODULE_SEARCH_PATH $arg"
+    done
+
+    # Escape application args
+    save () {
+        for i do printf %s\\n "$i" | sed "s/'/'\\\\''/g;1s/^/'/;\$s/\$/' \\\\/" ; done
+        echo " "
+    }
+    APP_ARGS=`save "$@"`
+
+    # Collect all arguments for the java command, following the shell quoting and substitution rules
+    eval set -- $DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS "\"-Dorg.gradle.appname=$APP_BASE_NAME\"" -classpath "\"$CLASSPATH\"" org.gradle.wrapper.GradleWrapperMain "$APP_ARGS"
+
+    exec "$JAVACMD" "$@"
+
+else
+    # Escape application args
+    save () {
+        for i do printf %s\\n "$i" | sed "s/'/'\\\\''/g;1s/^/'/;\$s/\$/' \\\\/" ; done
+        echo " "
+    }
+    APP_ARGS=`save "$@"`
+
+    # Collect all arguments for the java command, following the shell quoting and substitution rules
+    eval set -- $DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS "\"-Dorg.gradle.appname=$APP_BASE_NAME\"" -classpath "\"$CLASSPATH\"" org.gradle.wrapper.GradleWrapperMain "$APP_ARGS"
+
+    exec "$JAVACMD" "$@"
+
 fi
-
-# Escape application args
-save () {
-    for i do printf %s\\n "$i" | sed "s/'/'\\\\''/g;1s/^/'/;\$s/\$/' \\\\/" ; done
-    echo " "
-}
-APP_ARGS=`save "$@"`
-
-# Collect all arguments for the java command, following the shell quoting and substitution rules
-eval set -- $DEFAULT_JVM_OPTS $JAVA_OPTS $GRADLE_OPTS "\"-Dorg.gradle.appname=$APP_BASE_NAME\"" -classpath "\"$CLASSPATH\"" org.gradle.wrapper.GradleWrapperMain "$APP_ARGS"
-
-exec "$JAVACMD" "$@"
