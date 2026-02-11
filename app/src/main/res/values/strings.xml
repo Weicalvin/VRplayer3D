@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VR Player Pro</string>
+    <string name="pick_video">選擇影片</string>
+    <string name="playing">開始播放</string>
+    <string name="paused">播放暫停</string>
+</resources>
