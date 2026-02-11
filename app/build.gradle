@@ -1,20 +1,21 @@
 plugins {
-    id 'com.android.application'
-    id 'kotlin-android'
+    // 明確指定版本，解決外掛版本打架的問題
+    id 'com.android.application' version '8.1.0'
+    id 'org.jetbrains.kotlin.android' version '1.9.0'
 }
 
 android {
-    namespace "com.vr.player"
+    namespace 'com.vr.player'
     compileSdk 34
-    
+
     defaultConfig {
         applicationId "com.vr.player"
-        minSdk 21
+        minSdk 24 // 建議改為 24，對 ExoPlayer 支援更好
         targetSdk 34
         versionCode 1
         versionName "1.0"
     }
-    
+
     buildTypes {
         release {
             minifyEnabled false
@@ -33,28 +34,17 @@ android {
 }
 
 dependencies {
-    // 基礎 UI
+    // 核心元件 (版本已統一)
+    implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.google.android.material:material:1.9.0'
 
-    // 核心：ExoPlayer (媒體播放器)
+    // VR 播放器核心
     implementation 'com.google.android.exoplayer:exoplayer:2.19.1'
     
-    // 網路通訊
-    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
-    
-    // JSON 解析
-    implementation 'org.json:json:20230227'
-    
-    // 協程
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1'
-    
-    // 核心：常用工具 (Kotlin)
-    implementation "androidx.core:core-ktx:1.10.1"
-    
-    // 測試
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    // 網路功能
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'org.json:json:20231013'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
 }
