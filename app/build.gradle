@@ -31,40 +31,47 @@ android {
         jvmTarget = '17'
     }
 
-    // 🔥 核彈級修復：解決所有重複檔案與衝突 🔥
+    // 🔥 關鍵修改 1：遇到重複檔案，直接選第一個，不要報錯！
     packagingOptions {
-        resources {
-            excludes += [
-                'META-INF/{AL2.0,LGPL2.1}',
-                'META-INF/LICENSE.txt',
-                'META-INF/LICENSE',
-                'META-INF/NOTICE.txt',
-                'META-INF/NOTICE',
-                'META-INF/DEPENDENCIES'
-            ]
-        }
+        pickFirst 'META-INF/DEPENDENCIES'
+        pickFirst 'META-INF/LICENSE'
+        pickFirst 'META-INF/LICENSE.txt'
+        pickFirst 'META-INF/license.txt'
+        pickFirst 'META-INF/NOTICE'
+        pickFirst 'META-INF/NOTICE.txt'
+        pickFirst 'META-INF/notice.txt'
+        pickFirst 'META-INF/ASL2.0'
+        pickFirst 'META-INF/*.kotlin_module'
+        pickFirst 'classes.jar'
+        pickFirst 'lib/x86/libc++_shared.so'
+        pickFirst 'lib/x86_64/libc++_shared.so'
+        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
+        pickFirst 'lib/arm64-v8a/libc++_shared.so'
     }
     
-    // 忽略 Lint 檢查
+    // 🔥 關鍵修改 2：關閉囉唆的檢查
     lintOptions {
         abortOnError false
         checkReleaseBuilds false
     }
 }
 
+// 🔥 關鍵修改 3：全域排除會打架的庫
+configurations.all {
+    exclude group: 'org.json', module: 'json' // 排除重複的 JSON
+    exclude group: 'com.google.guava', module: 'listenablefuture' // 排除重複的 Guava 衝突
+}
+
 dependencies {
-    // 核心元件
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-
-    // VR 功能
+    
+    // VR 播放器
     implementation 'com.google.android.exoplayer:exoplayer:2.19.1'
     
-    // 網路與協程
+    // 網路
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
-    
-    // ⚠️ 注意：這裡絕對不能有 org.json，因為系統內建就有，加了會導致打包失敗！
 }
