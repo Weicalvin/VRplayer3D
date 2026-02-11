@@ -5,7 +5,6 @@ on:
     branches:
       - main
       - master
-      - develop
   pull_request:
     branches:
       - main
@@ -15,10 +14,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
-    permissions:
-      contents: read
-      actions: read
 
     steps:
       - name: Checkout code
@@ -29,7 +24,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
@@ -37,32 +31,12 @@ jobs:
           cmdline-tools-version: latest
           accept-android-sdk-licenses: true
 
-      - name: Build APK with Gradle
-        run: gradle clean assembleDebug --stacktrace
+      - name: Build with Gradle
+        run: ./gradlew clean assembleDebug
 
-      - name: Check APK exists
-        run: |
-          if [ -f "app/build/outputs/apk/debug/app-debug.apk" ]; then
-            echo "✅ APK 已生成"
-            ls -lh app/build/outputs/apk/debug/app-debug.apk
-          else
-            echo "❌ APK 未找到"
-            find app/build -name "*.apk" -type f || echo "No APK found"
-            exit 1
-          fi
-
-      - name: Upload APK as Artifact
+      - name: Upload APK
         if: success()
         uses: actions/upload-artifact@v4
         with:
           name: app-debug
           path: app/build/outputs/apk/debug/app-debug.apk
-          retention-days: 30
-
-      - name: Create Release
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v1
-        with:
-          files: app/build/outputs/apk/debug/app-debug.apk
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
