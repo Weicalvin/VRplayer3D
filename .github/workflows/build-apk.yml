@@ -24,6 +24,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Increase file descriptor limit
+        run: ulimit -n 4096
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -41,7 +44,9 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build APK with Gradle
-        run: bash ./gradlew clean assembleDebug --stacktrace
+        run: |
+          ulimit -n 4096
+          ./gradlew clean assembleDebug --stacktrace
 
       - name: Check APK exists
         run: |
