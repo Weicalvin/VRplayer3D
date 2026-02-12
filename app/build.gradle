@@ -31,7 +31,7 @@ android {
         jvmTarget = '17'
     }
 
-    // 🔥 這是你辛苦補上的防護罩，這裡都保留著！
+    // 🔥 升級版防護罩：解決 .so 和 module-info 衝突
     packaging {
         resources {
             pickFirsts += [
@@ -50,11 +50,12 @@ android {
                 'lib/arm64-v8a/libc++_shared.so'
             ]
             excludes += [
-                'META-INF/{AL2.0,LGPL2.1}'
+                'META-INF/{AL2.0,LGPL2.1}',
+                '**/module-info.class'  // 👈 新增：解決 Java 版本衝突
             ]
         }
     }
-    
+
     // 忽略檢查
     lint {
         abortOnError = false
@@ -62,7 +63,11 @@ android {
     }
 }
 
-// 👇 這裡就是之前不小心消失的關鍵部分！這次一定都在！
+// 🔥 新增：強制解決 ExoPlayer 的 Guava 衝突 (這是 1m 54s 失敗的主因)
+configurations.all {
+    exclude group: 'com.google.guava', module: 'listenablefuture'
+}
+
 dependencies {
     // 核心元件
     implementation 'androidx.core:core-ktx:1.12.0'
