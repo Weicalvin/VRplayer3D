@@ -30,8 +30,9 @@ jobs:
       # --no-daemon: 避免 CI 環境記憶體不足導致崩潰 (解決 Image 6 的問題)
       # -Dorg.gradle.jvmargs: 限制記憶體使用量，防止 OOM
       - name: Build APK (Debug)
-        run: ./gradlew assembleDebug --no-daemon --stacktrace -Dorg.gradle.jvmargs="-Xmx2048m"
-
+    #    run: ./gradlew assembleDebug --no-daemon --stacktrace -Dorg.gradle.jvmargs="-Xmx2048m"
+        run: ./gradlew assembleDebug --no-daemon --stacktrace -Dorg.gradle.jvmargs="-Xmx2048m -XX:MaxMetaspaceSize=512m"
+       
       # 4. 上傳 APK
       - name: Upload APK
         uses: actions/upload-artifact@v4
