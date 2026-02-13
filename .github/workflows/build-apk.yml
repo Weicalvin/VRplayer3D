@@ -3,38 +3,44 @@ name: Build Android APK
 on:
   push:
     branches: [ "main" ]
-  workflow_dispatch:
+  workflow_dispatch: # 允許手動點擊按鈕觸發建置
 
 jobs:
   build:
+    name: Build APK
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 1. 設定 Java 17 環境 (解決截圖中的錯誤)
       - name: Set up JDK 17
-        uses: [actions/setup-java@v4](https://github.com)
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: 'gradle' # 新增快取功能以加速後續建置
+          cache: 'gradle'
 
-      - name: Setup Gradle
-        uses: [gradle/actions/setup-gradle@v3](https://github.com)
+      # 2. 如果您的專案是標準 Expo 結構，原生代碼通常在 android 資料夾內
+      # 如果您的 gradlew 就在根目錄，請刪除下方的 working-directory 設定
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+        # working-directory: ./android  <-- 如果是 Expo 專案且未 Eject 到根目錄，請取消此行註解
 
-      - name: 🚑 自動修復 Gradle 權限與格式
-        run: |
-          # 解決 Windows/Linux 換行符號相容性與執行權限問題
-          sed -i 's/\r$//' gradlew
-          chmod +x gradlew
-
+      # 3. 執行 Gradle 建置
       - name: Build APK (Debug)
-        # 使用 ./gradlew 確保環境一致
         run: ./gradlew assembleDebug --stacktrace
+        # working-directory: ./android  <-- 如果是 Expo 專案且未 Eject 到根目錄，請取消此行註解
 
+      # 4. 上傳生成的 APK
       - name: Upload APK
-        uses: [actions/upload-artifact@v4](https://github.com)
+        uses: actions/upload-artifact@v4
         with:
-          name: VR-Player-App
-          path: app/build/outputs/apk/debug/*.apk
-          
+          name: VR-Player-App-Debug
+          # 注意：路徑可能會根據您的專案結構有所不同
+          # 如果是純 Android 專案： app/build/outputs/apk/debug/*.apk
+          # 如果是 Expo (在 android 目錄下)： android/app/build/outputs/apk/debug/*.apk
+          path: |
+            **/build/outputs/apk/debug/*.apk
+          retention-days: 5
